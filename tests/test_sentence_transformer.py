@@ -793,6 +793,71 @@ def test_override_config_versions(stsb_bert_tiny_model: SentenceTransformer) -> 
         lambda bert_model, word_model: word_model,
     ],
 )
+def test_model_safe_dict(
+    stsb_bert_tiny_model: SentenceTransformer,
+    avg_word_embeddings_levy: SentenceTransformer,
+    modules: Callable[[], list[nn.Module] | SentenceTransformer],
+) -> None:
+    modules = modules(stsb_bert_tiny_model, avg_word_embeddings_levy)  # Call the lambda to get the actual modules
+    if isinstance(modules, SentenceTransformer):
+        model = modules
+    else:
+        # output_hidden_states must be True for WeightedLayerPooling
+        if isinstance(modules[1], WeightedLayerPooling):
+            modules[0].auto_model.config.output_hidden_states = True
+        model = SentenceTransformer(modules=modules)
+
+    original_state_dict = model.state_dict()
+
+    with SafeTemporaryDirectory() as tmp_folder:
+        model.save(tmp_folder)
+        # Ensure that we only have the safetensors file and no pytorch_model.bin
+        assert list(Path(tmp_folder).rglob("**/model.safetensors"))
+        assert not list(Path(tmp_folder).rglob("**/pytorch_model.bin"))
+
+        # Ensure that we can load the model again and get the same embeddings
+        loaded_model = SentenceTransformer(tmp_folder, local_files_only=True)
+
+        loaded_state_dict = loaded_model.state_dict()
+
+        assert len(original_state_dict) == len(loaded_state_dict), "Mismatch in number of layers"
+
+        for key_item_original, key_item_loaded in zip(original_state_dict.items(), loaded_state_dict.items()):
+            assert key_item_original[0] == key_item_loaded[0], \
+            f"Mismatched keys: Original: {key_item_original[0]} Loaded: {key_item_loaded[0]}"
+            assert np.allclose(key_item_original[1], key_item_loaded[1])
+
+@pytest.mark.parametrize(
+    "modules",
+    [
+        lambda bert_model, word_model: [
+            bert_model[0],
+            Pooling(128, "mean"),
+            Dense(128, 128),
+        ],
+        lambda bert_model, word_model: [
+            bert_model[0],
+            CNN(128, 128),
+            Pooling(128, "mean"),
+        ],
+        lambda bert_model, word_model: [
+            bert_model[0],
+            Pooling(128, "mean"),
+            LayerNorm(128),
+        ],
+        lambda bert_model, word_model: [
+            word_model[0],
+            LSTM(300, 128),
+            Pooling(128, "mean"),
+        ],
+        lambda bert_model, word_model: [
+            bert_model[0],
+            WeightedLayerPooling(128, num_hidden_layers=2, layer_start=1),
+            Pooling(128, "mean"),
+        ],
+        lambda bert_model, word_model: word_model,
+    ],
+)
 def test_safetensors(
     stsb_bert_tiny_model: SentenceTransformer,
     avg_word_embeddings_levy: SentenceTransformer,
