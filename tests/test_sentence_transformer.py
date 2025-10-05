@@ -825,6 +825,7 @@ def test_model_safe_dict(
         for key_item_original, key_item_loaded in zip(original_state_dict.items(), loaded_state_dict.items()):
             assert key_item_original[0] == key_item_loaded[0], \
             f"Mismatched keys: Original: {key_item_original[0]} Loaded: {key_item_loaded[0]}"
+            assert key_item_original[1].device == key_item_loaded[1].device, f"Mismatched device for {key_item_original[0]}"
             assert np.allclose(key_item_original[1], key_item_loaded[1]), f"Mismatched values for {key_item_original[0]}"
 
 @pytest.mark.parametrize(
