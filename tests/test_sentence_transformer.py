@@ -815,7 +815,7 @@ def test_safetensors(
         assert not list(Path(tmp_folder).rglob("**/pytorch_model.bin"))
 
         # Ensure that we can load the model again and get the same embeddings
-        loaded_model = SentenceTransformer(tmp_folder)
+        loaded_model = SentenceTransformer(tmp_folder, local_files_only=True)
         loaded_embedding = loaded_model.encode("Hello, World!")
         assert np.allclose(original_embedding, loaded_embedding)
 
