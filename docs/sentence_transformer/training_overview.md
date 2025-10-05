@@ -19,30 +19,42 @@ Also see [**Training Examples**](training/examples) for numerous training script
 
 Training Sentence Transformer models involves between 4 to 6 components:
 
-<div class="components">
+<div class="container">
     <a href="#model" class="box">
         <div class="header">Model</div>
-        Learn how to initialize the <b>model</b> for training.
+        <div class="mainbody">
+            <p>Learn how to initialize the <b>model</b> for training.</p>
+        </div>
     </a>
     <a href="#dataset" class="box">
         <div class="header">Dataset</div>
-        Learn how to prepare the <b>data</b> for training.
+        <div class="mainbody">
+            <p>Learn how to prepare the <b>data</b> for training.</p>
+        </div>
     </a>
     <a href="#loss-function" class="box">
         <div class="header">Loss Function</div>
-        Learn how to prepare and choose a <b>loss</b> function.
+        <div class="mainbody">
+            <p>Learn how to prepare and choose a <b>loss</b> function.</p>
+        </div>
     </a>
     <a href="#training-arguments" class="box optional">
         <div class="header">Training Arguments</div>
-        Learn which <b>training arguments</b> are useful.
+        <div class="mainbody">
+            <p>Learn which <b>training arguments</b> are useful.</p>
+        </div>
     </a>
     <a href="#evaluator" class="box optional">
         <div class="header">Evaluator</div>
-        Learn how to <b>evaluate</b> during and after training.
+        <div class="mainbody">
+            <p>Learn how to <b>evaluate</b> during and after training.</p>
+        </div>
     </a>
     <a href="#trainer" class="box">
         <div class="header">Trainer</div>
-        Learn how to start the <b>training</b> process.
+        <div class="mainbody">
+            <p>Learn how to start the <b>training</b> process.</p>
+        </div>
     </a>
 </div>
 <p></p>
