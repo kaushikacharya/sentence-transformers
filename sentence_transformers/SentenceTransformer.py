@@ -324,6 +324,7 @@ class SentenceTransformer(nn.Sequential, FitMixin, PeftAdapterMixin):
                 )
                 == self._model_config["model_type"]
             ):
+                logger.info(f"Loading pretrained SentenceTransformer model {self.__class__.__name__}: {model_name_or_path}")
                 modules, self.module_kwargs = self._load_sbert_model(
                     model_name_or_path,
                     token=token,
@@ -336,6 +337,7 @@ class SentenceTransformer(nn.Sequential, FitMixin, PeftAdapterMixin):
                     config_kwargs=config_kwargs,
                 )
             else:
+                logger.info("Creating Transformer + Mean Pooling model {self.__class__.__name__}: {model_name_or_path}")
                 modules = self._load_auto_model(
                     model_name_or_path,
                     token=token,
