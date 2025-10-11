@@ -868,10 +868,8 @@ def test_safetensors(
     if isinstance(modules, SentenceTransformer):
         model = modules
     else:
-        for i, outer_m in enumerate(modules):
-            logging.info(f"{i} -> {outer_m}")
-            for idx, m in outer_m.modules():
-                logging.info(f"{idx} -> {m}")
+        for i, m in enumerate(modules):
+            logging.info(f"{i} -> {m}")
 
         # output_hidden_states must be True for WeightedLayerPooling
         if isinstance(modules[1], WeightedLayerPooling):
